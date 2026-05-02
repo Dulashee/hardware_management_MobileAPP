@@ -1,11 +1,8 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-// IMPORTANT: Change this URL based on your device:
-// - Android Emulator: 'http://10.0.2.2:5000/api'
-// - Physical Android/iOS Device: 'http://192.168.1.39:5000/api' (your computer's IP)
-// - iOS Simulator: 'http://localhost:5000/api'
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.39:5000/api';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://hardwaremanagementmobileapp-production.up.railway.app/api';
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, '');
 
 export const toAbsoluteFileUrl = (url) => {
