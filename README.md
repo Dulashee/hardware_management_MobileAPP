@@ -346,12 +346,12 @@ This project is created for educational purposes.
 
 SLIIT Undergraduates - Year 2 Semester 2
 Group Number: 38
-Member 1: IT24100108 – Sanjana B.A. – Module
-Member 2: IT24100576 – Pathberiya H.A. – Module
-Member 3: IT24101855 – Athukorala S.B. – Module
-Member 4: IT24101843 – Dharmadasa K.A.Y.T.H. – Module
-Member 5: IT24101809 – Ferdinando M.D.S. – Module
-Member 6: IT24100926 – Pathirana E.P.D.N. – Module 
+Member 1: IT24100108 – Sanjana B.A. – Order Management
+Member 2: IT24100576 – Pathberiya H.A. – Product Management
+Member 3: IT24101855 – Athukorala S.B. – Supplier Management
+Member 4: IT24101843 – Dharmadasa K.A.Y.T.H. – Notice Management
+Member 5: IT24101809 – Ferdinando M.D.S. – Task Management
+Member 6: IT24100926 – Pathirana E.P.D.N. – Repair & Return Management 
 
 
 ## 📞 Support
