@@ -1,100 +1,143 @@
 # Smart Hardware Inventory Management System
 
-A professional full-stack mobile application for managing hardware inventory, orders, suppliers, tasks, and repairs. Built with MERN stack (MongoDB, Express.js, React Native, Node.js) and Cloudinary for image storage.
+A full-stack hardware inventory management system with a React Native (Expo) mobile app and an Express.js backend API.
 
-## 📱 Features
+It supports authentication, products, orders, suppliers, notices, tasks, repairs, file uploads, and role-based access control.
 
-### Authentication & User Management
-- ✅ User Registration & Login with JWT
-- ✅ Role-based Access Control (Admin, Staff, Viewer)
-- ✅ Password Hashing with bcrypt (12 rounds)
-- ✅ Secure Token Storage with Expo SecureStore
-- ✅ Profile Management
-- ✅ Password Change
+## Features
+
+### Authentication & Users
+- JWT-based authentication
+- Register / login
+- Profile view/update
+- Change password
+- Admin user management
+- Roles: `admin`, `staff`, `customer`
 
 ### Product Management
-- ✅ Complete CRUD operations
-- ✅ Stock tracking and management
-- ✅ Image upload to Cloudinary
-- ✅ Low stock alerts
-- ✅ Category-based filtering
+- Product CRUD
+- SKU uniqueness and validation
+- Stock updates and low-stock alerts
+- Product image upload (Cloudinary)
 
 ### Order Management
-- ✅ Order creation with automatic stock reduction
-- ✅ MongoDB transactions for data integrity
-- ✅ Order status tracking
-- ✅ Payment status management
-- ✅ Order statistics
+- Create orders with automatic stock reduction
+- MongoDB transactions for order create/cancel stock consistency
+- Order status workflow
+- Order stats
+- Payment proof upload
 
 ### Supplier Management
-- ✅ Vendor information tracking
-- ✅ Document uploads
-- ✅ Contact management
-- ✅ Performance tracking
+- Supplier CRUD (soft deactivate on delete)
+- Supplier document/contract uploads
 
-### Notice & Announcements
-- ✅ Create and manage announcements
-- ✅ Banner images
-- ✅ Priority levels
-- ✅ Active/expired notices
+### Notice Management
+- Create/update/delete notices
+- Banner image upload
+- Active notices endpoint with date filtering
+- Type, priority, target audience fields
 
 ### Task Management
-- ✅ Staff task assignments
-- ✅ Priority levels (low, medium, high, urgent)
-- ✅ Proof of work uploads
-- ✅ Task statistics
-- ✅ Progress tracking
+- Admin creates tasks
+- Staff/Admin update task status
+- Proof-of-work image uploads
+- My tasks endpoint
+- Task stats
 
-### Repair Tracking
-- ✅ After-sales repair management
-- ✅ Damage photo uploads
-- ✅ Repair status tracking
-- ✅ Cost tracking
-- ✅ Customer information
+### Repair Management
+- Repair creation with generated repair number
+- Damage photo uploads
+- Repair status workflow
+- Repair stats
 
-## 🏗️ Architecture
+---
+
+## Tech Stack
+
+### Mobile (`mobile`)
+- Expo `~54.0.33`
+- React `19.1.0`
+- React Native `0.81.5`
+- React Navigation v7 (`@react-navigation/native`, `stack`, `bottom-tabs`)
+- Axios
+- Expo SecureStore
+- Expo Image Picker / Document Picker
+- React Native Paper
+
+### Backend (`server`)
+- Node.js + Express `^5.2.1`
+- MongoDB Atlas + Mongoose `^9.4.1`
+- JWT (`jsonwebtoken`)
+- bcrypt (`bcryptjs`)
+- express-validator
+- multer (multipart upload handling)
+- Cloudinary SDK
+- cors, morgan, dotenv
+
+---
+
+## Architecture Overview
+
+### High Level
+
+- **Clients**: Expo mobile app (Android/iOS), API tools (Postman)
+- **API**: Express server under `/api`
+- **Database**: MongoDB Atlas via Mongoose
+- **File flow**: client upload -> multer temp file (`uploads/`) -> Cloudinary -> URL/public_id saved in MongoDB
+- **Auth**: JWT Bearer token + role checks
 
 ### Backend Structure
-```
+
+```text
 server/
 ├── src/
-│   ├── config/           # Database & Cloudinary configuration
-│   ├── middleware/       # Auth, error handling, validation
-│   ├── modules/          # Feature modules
-│   │   ├── auth/        # Authentication & user management
-│   │   ├── product/     # Product management
-│   │   ├── order/       # Order management
-│   │   ├── supplier/    # Supplier management
-│   │   ├── notice/      # Notice management
-│   │   ├── task/        # Task management
-│   │   └── repair/      # Repair tracking
-│   └── routes/          # Route aggregation
-├── server.js            # Entry point
-├── seed.js              # Database seeding script
-└── .env                 # Environment variables
-```
+│   ├── config/
+│   │   ├── database.js
+│   │   └── cloudinary.js
+│   ├── middleware/
+│   │   ├── auth.js
+│   │   ├── errorHandler.js
+│   │   └── upload.js
+│   ├── modules/
+│   │   ├── auth/
+│   │   ├── product/
+│   │   ├── order/
+│   │   ├── supplier/
+│   │   ├── notice/
+│   │   ├── task/
+│   │   └── repair/
+│   └── routes/
+│       └── index.js
+├── server.js
+├── seed.js
+└── package.json
+
 
 ### Mobile App Structure
 ```
 mobile/
 ├── src/
-│   ├── components/      # Reusable UI components
-│   ├── context/         # React Context (Auth)
-│   ├── navigation/      # React Navigation setup
-│   ├── screens/         # App screens
-│   ├── services/        # API services
-│   └── utils/           # Theme & utilities
-├── App.js              # Entry point
-└── app.json            # Expo configuration
+│   ├── components/
+│   ├── context/
+│   │   └── AuthContext.js
+│   ├── navigation/
+│   │   └── AppNavigator.js
+│   ├── screens/
+│   ├── services/
+│   │   └── api.js
+│   └── utils/
+│       └── theme.js
+├── App.js
+├── app.json
+└── package.json
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js v16+
+- Node.js 18+ recommended
 - MongoDB Atlas account
 - Cloudinary account
-- Expo CLI (for mobile development)
 
 ### Backend Setup
 
@@ -107,42 +150,7 @@ mobile/
    ```bash
    npm install
    ```
-
-3. **Configure environment variables**
-   Create `.env` file in server directory:
-   ```env
-   PORT=5000
-   NODE_ENV=development
    
-   # MongoDB Atlas
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/hardware_inventory?retryWrites=true&w=majority
-   
-   # JWT Secret (generate a strong random string)
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   
-   # Cloudinary
-   CLOUDINARY_CLOUD_NAME=your-cloud-name
-   CLOUDINARY_API_KEY=your-api-key
-   CLOUDINARY_API_SECRET=your-api-secret
-   ```
-
-4. **Seed database with admin user**
-   ```bash
-   npm run seed
-   ```
-   
-   This creates:
-   - **Email:** admin@hardware.com
-   - **Password:** admin123
-   - **Role:** admin
-
-5. **Start development server**
-   ```bash
-   npm run dev
-   ```
-   
-   Server runs on: `http://localhost:5000`
-
 ### Mobile App Setup
 
 1. **Navigate to mobile directory**
@@ -155,32 +163,19 @@ mobile/
    npm install
    ```
 
-3. **Configure API URL**
-   Edit `mobile/src/services/api.js`:
-   ```javascript
-   // For Android emulator
-   const API_URL = 'http://10.0.2.2:5000/api';
-   
-   // For iOS simulator
-   const API_URL = 'http://localhost:5000/api';
-   
-   // For physical device (use your computer's IP)
-   const API_URL = 'http://192.168.1.100:5000/api';
-   ```
-
-4. **Start Expo**
+3. **Start Expo**
    ```bash
-   npx expo start
+   npx expo start --tunnel
    ```
 
-5. **Run on device**
+4. **Run on device**
    - Scan QR code with Expo Go app (Android/iOS)
    - Press `a` for Android emulator
    - Press `i` for iOS simulator
 
 ## 📡 API Endpoints
 
-### Authentication
+### Authentication (/api/auth)
 ```
 POST   /api/auth/register          - Register new user
 POST   /api/auth/login             - Login user
@@ -189,9 +184,10 @@ PUT    /api/auth/profile           - Update profile (Protected)
 PUT    /api/auth/change-password   - Change password (Protected)
 GET    /api/auth/users             - Get all users (Admin only)
 PUT    /api/auth/users/:id         - Update user role/status (Admin only)
+DELETE /api/auth/users/:id         - Delete Users
 ```
 
-### Products
+### Products (/api/products)
 ```
 GET    /api/products               - Get all products
 GET    /api/products/low-stock     - Get low stock products
@@ -202,7 +198,7 @@ DELETE /api/products/:id           - Delete product (Protected)
 PATCH  /api/products/:id/stock     - Update stock (Protected)
 ```
 
-### Orders
+### Orders (/api/orders)
 ```
 GET    /api/orders                 - Get all orders
 GET    /api/orders/stats           - Get order statistics
@@ -210,15 +206,18 @@ GET    /api/orders/:id             - Get order by ID
 POST   /api/orders                 - Create order (Protected)
 PUT    /api/orders/:id/status      - Update order status (Protected)
 DELETE /api/orders/:id             - Cancel order (Protected)
+POST   /api/orders/:id/payment-proof - Upload payment proof
 ```
 
 ### Suppliers
 ```
-GET    /api/suppliers              - Get all suppliers
-GET    /api/suppliers/:id          - Get supplier by ID
-POST   /api/suppliers              - Create supplier (Protected)
-PUT    /api/suppliers/:id          - Update supplier (Protected)
-DELETE /api/suppliers/:id          - Delete supplier (Protected)
+GET    /api/suppliers                - Get all suppliers
+GET    /api/suppliers/:id            - Get supplier by ID
+POST   /api/suppliers                - Create supplier (Protected)
+PUT    /api/suppliers/:id            - Update supplier (Protected)
+DELETE /api/suppliers/:id            - Delete supplier (Protected)
+POST   /api/suppliers/:id/documents  - Upload documents
+POST   /api/suppliers/:id/contract
 ```
 
 ### Notices
@@ -240,6 +239,7 @@ GET    /api/tasks/:id              - Get task by ID
 POST   /api/tasks                  - Create task (Protected)
 PUT    /api/tasks/:id/status       - Update task status (Protected)
 POST   /api/tasks/:id/proof        - Upload proof (Protected)
+DELETE /api/tasks/:id              - Delete Completed tasks
 ```
 
 ### Repairs
@@ -250,6 +250,7 @@ GET    /api/repairs/:id            - Get repair by ID
 POST   /api/repairs                - Create repair (Protected)
 PUT    /api/repairs/:id/status     - Update repair status (Protected)
 POST   /api/repairs/:id/photos     - Upload photos (Protected)
+PUT    /api/repairs/:id            - Edit repairs
 ```
 
 ## 🔐 Authentication
@@ -269,15 +270,15 @@ POST   /api/repairs/:id/photos     - Upload photos (Protected)
 
 ## 🛡️ Security Features
 
-- ✅ Password hashing with bcrypt (12 salt rounds)
-- ✅ JWT token authentication
-- ✅ Token expiration (7 days)
-- ✅ Request validation with express-validator
-- ✅ MongoDB injection prevention
-- ✅ CORS configuration
-- ✅ Role-based access control
-- ✅ Secure password comparison
-- ✅ Error handling without data leakage
+-  Password hashing with bcrypt (12 salt rounds)
+-  JWT token authentication
+-  Token expiration (7 days)
+-  Request validation with express-validator
+-  MongoDB injection prevention
+-  CORS configuration
+-  Role-based access control
+-  Secure password comparison
+-  Error handling without data leakage
 
 ## 📸 Image Upload
 
@@ -294,62 +295,6 @@ Supported uploads:
 - Task proof photos
 - Repair damage photos
 
-## 🎨 UI/UX Design
-
-### Theme
-- **Primary Color**: #1E3A5F (Industrial Blue)
-- **Secondary**: #F59E0B (Hardware Orange)
-- **Background**: #F5F7FA (Light Gray)
-- **Text**: High contrast for readability
-
-### Design Principles
-- Clean, modern interface
-- Industrial hardware aesthetic
-- Consistent spacing and typography
-- Mobile-first responsive design
-- Intuitive navigation
-
-## 📊 Database Models
-
-### User
-- name, email, phone, password (hashed)
-- role (admin/staff/viewer)
-- isActive, avatar, lastLogin
-
-### Product
-- name, SKU, category, description
-- price, stock, lowStockThreshold
-- images (Cloudinary URLs)
-- supplier (reference)
-
-### Order
-- orderNumber (auto-generated)
-- customer details
-- items (with quantity and unitPrice)
-- totalAmount, status, paymentStatus
-- notes
-
-### Supplier
-- name, contactPerson, email, phone
-- address, GST number
-- documents (Cloudinary URLs)
-- isActive
-
-### Notice
-- title, content, priority
-- banner image
-- isActive, expiresAt
-
-### Task
-- title, description, assignedTo
-- priority, status, dueDate
-- proof (Cloudinary URLs)
-
-### Repair
-- productName, customer details
-- issue description, status
-- damage photos
-- estimated cost, actual cost
 
 ## 🧪 Testing
 
@@ -376,20 +321,6 @@ After running `npm run seed`:
 - Async/await pattern
 - ESLint rules (recommended)
 
-### Git Workflow
-```bash
-git checkout -b feature/your-feature-name
-git commit -m "feat: add new feature"
-git push origin feature/your-feature-name
-```
-
-### Commit Messages
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation
-- `style:` Code style changes
-- `refactor:` Code refactoring
-- `test:` Tests
 
 ## 🔧 Troubleshooting
 
@@ -407,58 +338,28 @@ git push origin feature/your-feature-name
 - Ensure all files are UTF-8 (no BOM)
 - In VS Code: Click encoding in bottom-right → "Save with Encoding" → "UTF-8"
 
-### Port Already in Use
-```bash
-# Windows
-netstat -ano | findstr :5000
-taskkill /PID <PID> /F
-
-# Mac/Linux
-lsof -i :5000
-kill -9 <PID>
-```
-
-## 📦 Deployment
-
-### Backend (Production)
-1. Set `NODE_ENV=production`
-2. Use strong JWT_SECRET
-3. Configure MongoDB Atlas production cluster
-4. Set up Cloudinary production account
-5. Deploy to Heroku, Railway, or AWS
-
-### Mobile (Production)
-1. Update API_URL to production backend
-2. Build with Expo:
-   ```bash
-   eas build --platform android
-   eas build --platform ios
-   ```
-3. Publish to app stores
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push to branch
-5. Open Pull Request
-
 ## 📄 License
 
 This project is created for educational purposes.
 
 ## 👥 Team
 
-Developed as a professional full-stack project demonstrating modern mobile app development with MERN stack.
+SLIIT Undergraduates - Year 2 Semester 2
+Group Number: 38
+Member 1: IT24100108 – Sanjana B.A. – Module
+Member 2: IT24100576 – Pathberiya H.A. – Module
+Member 3: IT24101855 – Athukorala S.B. – Module
+Member 4: IT24101843 – Dharmadasa K.A.Y.T.H. – Module
+Member 5: IT24101809 – Ferdinando M.D.S. – Module
+Member 6: IT24100926 – Pathirana E.P.D.N. – Module 
+
 
 ## 📞 Support
 
 For issues or questions:
 1. Check troubleshooting section
-2. Review API documentation
-3. Check console logs for errors
-4. Verify environment variables
+2. Check console logs for errors
+3. Verify environment variables
 
 ---
 
