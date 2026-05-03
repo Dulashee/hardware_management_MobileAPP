@@ -114,7 +114,7 @@ server/
 
 
 ### Mobile App Structure
-```
+```text
 mobile/
 ├── src/
 │   ├── components/
