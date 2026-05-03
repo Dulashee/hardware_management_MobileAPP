@@ -64,6 +64,32 @@ const RepairDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const handleDeleteRepair = () => {
+    Alert.alert(
+      'Delete Repair Record',
+      'Only returned repairs can be removed from the system. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setUpdating(true);
+              await repairAPI.delete(repairId);
+              Alert.alert('Success', 'Repair record deleted');
+              navigation.goBack();
+            } catch (err) {
+              Alert.alert('Error', err.response?.data?.message || 'Failed to delete repair');
+            } finally {
+              setUpdating(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleCostSubmit = async () => {
     if (!actualCost || parseFloat(actualCost) <= 0) {
       Alert.alert('Validation Error', 'Please enter a valid actual cost');
@@ -169,11 +195,26 @@ const RepairDetailScreen = ({ route, navigation }) => {
           <View style={styles.infoRow}><Text style={styles.infoLabel}>Received:</Text><Text style={styles.infoValue}>{formatDate(repair.receivedDate)}</Text></View>
         </View>
 
-        {nextStatus && (
-          <TouchableOpacity style={[styles.actionButton, styles.primaryButton]} onPress={() => handleStatusUpdate(nextStatus)} disabled={updating}>
-            {updating ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.actionButtonText}>Mark as {nextStatus}</Text>}
-          </TouchableOpacity>
-        )}
+        <View style={styles.actions}>
+          {nextStatus && (
+            <TouchableOpacity style={[styles.actionButton, styles.primaryButton]} onPress={() => handleStatusUpdate(nextStatus)} disabled={updating}>
+              {updating ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.actionButtonText}>Mark as {nextStatus}</Text>}
+            </TouchableOpacity>
+          )}
+          {isAdmin() && repair.status === 'returned' && (
+            <TouchableOpacity
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={handleDeleteRepair}
+              disabled={updating}
+            >
+              {updating ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.deleteActionText}>Delete Record</Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Actual Cost Modal */}
@@ -262,9 +303,12 @@ const styles = StyleSheet.create({
   issueText: { fontSize: theme.fontSize.md, color: theme.colors.text, lineHeight: 22 },
   photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm },
   photo: { width: 100, height: 100, borderRadius: theme.borderRadius.md },
+  actions: { gap: theme.spacing.md },
   actionButton: { padding: theme.spacing.lg, borderRadius: theme.borderRadius.md, alignItems: 'center' },
   primaryButton: { backgroundColor: theme.colors.primary },
+  deleteButton: { backgroundColor: theme.colors.danger },
   actionButtonText: { color: '#111111', fontSize: theme.fontSize.md, fontWeight: '700' },
+  deleteActionText: { color: '#FFFFFF', fontSize: theme.fontSize.md, fontWeight: '600' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
   modalContent: { backgroundColor: theme.colors.surfaceDark, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, width: '90%', maxHeight: '80%', borderWidth: 1, borderColor: theme.colors.border },
   modalTitle: { fontSize: theme.fontSize.xl, fontWeight: 'bold', color: theme.colors.text, marginBottom: theme.spacing.sm },
