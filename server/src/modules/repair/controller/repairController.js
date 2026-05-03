@@ -349,6 +349,49 @@ const uploadDamagePhotos = catchAsync(async (req, res, next) => {
  * @route GET /api/repairs/stats
  * @access Admin
  */
+/**
+ * Deletes a repair record (admin only, returned status only)
+ *
+ * @async
+ * @function deleteRepair
+ * @param {Object} req - Express request object
+ * @param {string} req.params.id - Repair MongoDB ID
+ * @param {Object} res - Express response object
+ * @returns {void} 204 - No content
+ * @route DELETE /api/repairs/:id
+ * @access Admin
+ */
+const deleteRepair = catchAsync(async (req, res, next) => {
+  const repair = await Repair.findById(req.params.id);
+
+  if (!repair) {
+    return next(new AppError('Repair not found', 404));
+  }
+
+  if (repair.status !== 'returned') {
+    return next(
+      new AppError('Only repairs with status "returned" can be deleted', 400)
+    );
+  }
+
+  if (repair.damagePhotos?.length) {
+    await Promise.all(
+      repair.damagePhotos.map(async (photo) => {
+        if (!photo.publicId) return;
+        try {
+          await deleteFromCloudinary(photo.publicId);
+        } catch (err) {
+          console.error(`Failed to delete Cloudinary asset ${photo.publicId}:`, err);
+        }
+      })
+    );
+  }
+
+  await Repair.findByIdAndDelete(req.params.id);
+
+  res.status(204).send();
+});
+
 const getRepairStats = catchAsync(async (req, res) => {
   const stats = await Repair.aggregate([
     {
@@ -389,5 +432,6 @@ module.exports = {
   updateRepair,
   updateRepairStatus,
   uploadDamagePhotos,
+  deleteRepair,
   getRepairStats,
 };
