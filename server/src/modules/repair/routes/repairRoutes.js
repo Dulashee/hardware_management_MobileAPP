@@ -8,6 +8,7 @@ const {
   updateRepair,
   updateRepairStatus,
   uploadDamagePhotos,
+  deleteRepair,
   getRepairStats,
 } = require('../controller/repairController');
 const { protect, authorizeRoles } = require('../../../middleware/auth');
@@ -61,6 +62,8 @@ router.put(
   validate,
   updateRepairStatus
 );
+
+router.delete('/:id', protect, authorizeRoles('admin'), deleteRepair);
 
 router.post(
   '/:id/photos',
