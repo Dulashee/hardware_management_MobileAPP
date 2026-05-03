@@ -448,6 +448,7 @@ export const repairAPI = {
     return api.put(`/repairs/${id}`, data);
   },
   updateStatus: (id, data) => api.put(`/repairs/${id}/status`, data),
+  delete: (id) => api.delete(`/repairs/${id}`),
   uploadPhotos: async (id, formData) => {
     const token = await SecureStore.getItemAsync('authToken');
     
