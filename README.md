@@ -343,7 +343,7 @@ After running `npm run seed`:
 This project is created for educational purposes.
 
 ## 👥 Team
-
+```text
 SLIIT Undergraduates - Year 2 Semester 2
 Group Number: 38
 Member 1: IT24100108 – Sanjana B.A. – Order Management
@@ -352,7 +352,7 @@ Member 3: IT24101855 – Athukorala S.B. – Supplier Management
 Member 4: IT24101843 – Dharmadasa K.A.Y.T.H. – Notice Management
 Member 5: IT24101809 – Ferdinando M.D.S. – Task Management
 Member 6: IT24100926 – Pathirana E.P.D.N. – Repair & Return Management 
-
+```
 
 ## 📞 Support
 
